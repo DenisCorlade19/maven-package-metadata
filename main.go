@@ -36,24 +36,6 @@ type MyDependency struct {
 	RequiredVersion string
 }
 
-func (v *Version) UnmarshalJSON(b []byte) error {
-	var dat map[string]interface{}
-
-	if err := json.Unmarshal(b, &dat); err != nil {
-		return err
-	}
-	date_string := "\"" + dat["published_at"].(string) + "\""
-	date_json := []byte(date_string)
-	var date time.Time
-
-	if err := json.Unmarshal(date_json, &date); err != nil {
-		return err
-	}
-
-	*v = Version{dat["number"].(string), date}
-	return nil
-}
-
 func ingestData() {
 
 	// Open the folder where the effective POMs are located
@@ -162,7 +144,7 @@ func ingestData() {
 		c.Visit(currentUrl)
 		// Format the timestamp to RFC 3339 standard
 		timestamp := resultTime[number] + ":00Z"
-		dt, _ := time.Parse("2006-01-02 15:04:05", timestamp)
+		dt, _ := time.Parse("2006-01-02 15:04:05Z", timestamp)
 		dtstr2 := dt.Format("2006-01-02T15:04:05Z")
 
 		// Create the dependency map
